@@ -2643,9 +2643,10 @@ int waitForInterruptInit (int pin, int mode)
   }
 
   /* open gpio */
-  sleep(1);
-  if (wiringPiGpioDeviceGetFd()<0) {
-    return -1;
+  unsigned int timeout = millis();
+  while (wiringPiGpioDeviceGetFd()<0) {
+    if (millis() - timeout > 1000) return -1;
+    usleep(10000);
   }
 
   struct gpioevent_request req;
